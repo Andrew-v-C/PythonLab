@@ -51,6 +51,7 @@ def engFormat(value, precision, polar):
 
 
 def engPrint(input, precision=2, polar=False):
+    print()
     # Determine if input is a matrix
     if isinstance(input, sp.Matrix):
         # Evaluate symbols
