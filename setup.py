@@ -25,6 +25,8 @@ prefixes = [
 def engFormatReal(value, precision):
     if value == 0:
         return "0"
+    if isinstance(value, sp.Expr):
+        value = value.evalf()
     exponent = int(sp.floor(sp.log(abs(value), 10) + 1e-9))
     if exponent >= -12 and exponent <= 14:
         exponent = (exponent // 3) * 3
@@ -60,8 +62,6 @@ def engPrint(input, precision=3, polar=False):
     print()
     # Determine if input is a matrix
     if isinstance(input, sp.Matrix):
-        # Evaluate symbols
-        input = input.evalf()
         # Determine column widths
         colWidths = [0] * input.cols
         for j in range(input.cols):
@@ -73,7 +73,7 @@ def engPrint(input, precision=3, polar=False):
             print("| ", end="")
             for j in range(input.cols):
                 valueStr = engFormat(input[i, j], precision, polar)
-                for k in range(int((colWidths[j] - len(valueStr)) / 2)):
+                for _ in range(int((colWidths[j] - len(valueStr)) / 2)):
                     valueStr = " " + valueStr
                 while len(valueStr) < colWidths[j]:
                     valueStr = valueStr + " "
@@ -85,7 +85,7 @@ def engPrint(input, precision=3, polar=False):
             if i < input.rows - 1:
                 print("|", end="")
                 for j in range(input.cols):
-                    for k in range(colWidths[j] + 2):
+                    for _ in range(colWidths[j] + 2):
                         print(" ", end="")
                 print("|")
     else:
