@@ -22,7 +22,7 @@ prefixes = [
 ]
 
 
-def engFormat(value, precision=2):
+def engFormatReal(value, precision):
     if value == 0:
         return "0"
     exponent = int(sp.floor(sp.log(abs(value), 10)))
@@ -35,44 +35,43 @@ def engFormat(value, precision=2):
     return f"{significand:.{precision}f}{prefix}"
 
 
-def engFormatComplex(value, precision, polar):
+def engFormat(value, precision, polar):
     if sp.im(value) == 0:
-        return engFormat(sp.re(value), precision)
+        return engFormatReal(sp.re(value), precision)
     else:
         if polar:
-            magnitude = engFormat(sp.Abs(value), precision)
+            magnitude = engFormatReal(sp.Abs(value), precision)
             angle = f"{sp.arg(value) * (180 / pi):.{precision}f}"
             return f"{magnitude} < {angle}"
         else:
-            realPart = engFormat(sp.re(value), precision)
-            imagPart = engFormat(abs(sp.im(value)), precision)
+            realPart = engFormatReal(sp.re(value), precision)
+            imagPart = engFormatReal(abs(sp.im(value)), precision)
             sign = "+" if sp.im(value) >= 0 else "-"
             return f"{realPart} {sign} j {imagPart}"
 
 
-def printNum(number, precision=3, polar=False):
-    print(engFormatComplex(number, precision, polar))
-    print()
-
-
-def printMat(matrix, precision=3, polar=False):
-    # Determine column widths
-    colWidths = [0] * matrix.cols
-    for j in range(matrix.cols):
-        for i in range(matrix.rows):
-            valueStr = engFormatComplex(matrix[i, j], precision, polar)
-            colWidths[j] = max(colWidths[j], len(valueStr))
-    # Print matrix
-    for i in range(matrix.rows):
-        print("[ ", end="")
-        for j in range(matrix.cols):
-            valueStr = engFormatComplex(matrix[i, j], precision, polar)
-            for k in range(int((colWidths[j] - len(valueStr)) / 2)):
-                valueStr = " " + valueStr
-            while len(valueStr) < colWidths[j]:
-                valueStr = valueStr + " "
-            if j < matrix.cols - 1:
-                valueStr = valueStr + "  "
-            print(valueStr, end="")
-        print(" ]")
+def engPrint(input, precision=3, polar=False):
+    # Determine if input is a matrix
+    if isinstance(input, sp.Matrix):
+        # Determine column widths
+        colWidths = [0] * input.cols
+        for j in range(input.cols):
+            for i in range(input.rows):
+                valueStr = engFormat(input[i, j], precision, polar)
+                colWidths[j] = max(colWidths[j], len(valueStr))
+        # Print input rows
+        for i in range(input.rows):
+            print("[ ", end="")
+            for j in range(input.cols):
+                valueStr = engFormat(input[i, j], precision, polar)
+                for k in range(int((colWidths[j] - len(valueStr)) / 2)):
+                    valueStr = " " + valueStr
+                while len(valueStr) < colWidths[j]:
+                    valueStr = valueStr + " "
+                if j < input.cols - 1:
+                    valueStr = valueStr + "  "
+                print(valueStr, end="")
+            print(" ]")
+    else:
+        print(engFormat(input, precision, polar))
     print()
