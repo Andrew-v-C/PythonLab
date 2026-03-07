@@ -35,7 +35,7 @@ def engFormat(value, precision=2):
     return f"{significand:.{precision}f}{prefix}"
 
 
-def engFormatComplex(value, precision=2, polar=False):
+def engFormatComplex(value, precision, polar):
     if sp.im(value) == 0:
         return engFormat(sp.re(value), precision)
     else:
@@ -50,26 +50,29 @@ def engFormatComplex(value, precision=2, polar=False):
             return f"{realPart} {sign} j {imagPart}"
 
 
-def printNumber(number, precision=2, polar=False):
+def printNum(number, precision=3, polar=False):
     print(engFormatComplex(number, precision, polar))
     print()
 
 
-def printMatrix(matrix, precision=2, polar=False):
+def printMat(matrix, precision=3, polar=False):
     # Determine column widths
     colWidths = [0] * matrix.cols
     for j in range(matrix.cols):
         for i in range(matrix.rows):
             valueStr = engFormatComplex(matrix[i, j], precision, polar)
             colWidths[j] = max(colWidths[j], len(valueStr))
-    # Print matrix rows
+    # Print matrix
     for i in range(matrix.rows):
+        print("[ ", end="")
         for j in range(matrix.cols):
             valueStr = engFormatComplex(matrix[i, j], precision, polar)
+            for k in range(int((colWidths[j] - len(valueStr)) / 2)):
+                valueStr = " " + valueStr
             while len(valueStr) < colWidths[j]:
                 valueStr = valueStr + " "
             if j < matrix.cols - 1:
                 valueStr = valueStr + "  "
             print(valueStr, end="")
-        print()
+        print(" ]")
     print()
