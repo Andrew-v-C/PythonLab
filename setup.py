@@ -50,9 +50,11 @@ def engFormat(value, precision, polar):
             return f"{realPart} {sign} j {imagPart}"
 
 
-def engPrint(input, precision=3, polar=False):
+def engPrint(input, precision=2, polar=False):
     # Determine if input is a matrix
     if isinstance(input, sp.Matrix):
+        # Evaluate symbols
+        input = input.evalf()
         # Determine column widths
         colWidths = [0] * input.cols
         for j in range(input.cols):
