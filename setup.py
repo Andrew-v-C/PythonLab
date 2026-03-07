@@ -56,9 +56,8 @@ def engFormat(value, precision, polar):
                 return f"{realPart} {sign} j {imagPart}"
 
 
-def engPrint(input, precision=3, polar=False, spacing=True):
-    if spacing:
-        print()
+def engPrint(input, precision=3, polar=False):
+    print()
     # Determine if input is a matrix
     if isinstance(input, sp.Matrix):
         # Evaluate symbols
@@ -91,5 +90,4 @@ def engPrint(input, precision=3, polar=False, spacing=True):
                 print("|")
     else:
         print(engFormat(input, precision, polar))
-    if spacing:
-        print()
+    print()
