@@ -70,7 +70,7 @@ def engPrint(input, precision=3, polar=False):
                 colWidths[j] = max(colWidths[j], len(valueStr))
         # Print matrix
         for i in range(input.rows):
-            print("| ", end="")
+            print("[ ", end="")
             for j in range(input.cols):
                 valueStr = engFormat(input[i, j], precision, polar)
                 for _ in range(int((colWidths[j] - len(valueStr)) / 2)):
@@ -80,14 +80,7 @@ def engPrint(input, precision=3, polar=False):
                 if j < input.cols - 1:
                     valueStr = valueStr + "  "
                 print(valueStr, end="")
-            print(" |")
-            # Add spacing between rows
-            if i < input.rows - 1:
-                print("|", end="")
-                for j in range(input.cols):
-                    for _ in range(colWidths[j] + 2):
-                        print(" ", end="")
-                print("|")
+            print(" ]")
     else:
         print(engFormat(input, precision, polar))
     print()
