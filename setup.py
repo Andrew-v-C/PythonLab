@@ -25,8 +25,8 @@ prefixes = [
 def engFormatReal(value, precision):
     if value == 0:
         return "0"
-    exponent = int(sp.floor(sp.log(abs(value), 10)))
-    if exponent >= -12 and exponent <= 12:
+    exponent = int(sp.floor(sp.log(abs(value), 10) + 1e-9))
+    if exponent >= -12 and exponent <= 14:
         exponent = (exponent // 3) * 3
         prefix = dict(prefixes)[exponent]
     else:
@@ -46,12 +46,19 @@ def engFormat(value, precision, polar):
         else:
             realPart = engFormatReal(sp.re(value), precision)
             imagPart = engFormatReal(abs(sp.im(value)), precision)
-            sign = "+" if sp.im(value) >= 0 else "-"
-            return f"{realPart} {sign} j {imagPart}"
+            if sp.re(value) == 0:
+                if sp.im(value) >= 0:
+                    return f"j {imagPart}"
+                else:
+                    return f"-j {imagPart}"
+            else:
+                sign = "+" if sp.im(value) >= 0 else "-"
+                return f"{realPart} {sign} j {imagPart}"
 
 
-def engPrint(input, precision=2, polar=False):
-    print()
+def engPrint(input, precision=3, polar=False, spacing=True):
+    if spacing:
+        print()
     # Determine if input is a matrix
     if isinstance(input, sp.Matrix):
         # Evaluate symbols
@@ -62,9 +69,9 @@ def engPrint(input, precision=2, polar=False):
             for i in range(input.rows):
                 valueStr = engFormat(input[i, j], precision, polar)
                 colWidths[j] = max(colWidths[j], len(valueStr))
-        # Print input rows
+        # Print matrix
         for i in range(input.rows):
-            print("[ ", end="")
+            print("| ", end="")
             for j in range(input.cols):
                 valueStr = engFormat(input[i, j], precision, polar)
                 for k in range(int((colWidths[j] - len(valueStr)) / 2)):
@@ -74,7 +81,15 @@ def engPrint(input, precision=2, polar=False):
                 if j < input.cols - 1:
                     valueStr = valueStr + "  "
                 print(valueStr, end="")
-            print(" ]")
+            print(" |")
+            # Add spacing between rows
+            if i < input.rows - 1:
+                print("|", end="")
+                for j in range(input.cols):
+                    for k in range(colWidths[j] + 2):
+                        print(" ", end="")
+                print("|")
     else:
         print(engFormat(input, precision, polar))
-    print()
+    if spacing:
+        print()
